@@ -38,7 +38,7 @@ Image load_image(const char* filename)
     return img;
 }
 
-void image_write(const char* filename, Image img)
+void write_image(const char* filename, Image img)
 {
     if(strstr(filename, ".png") != NULL || strstr(filename, ".PNG") != NULL)
     {
@@ -56,7 +56,7 @@ void image_write(const char* filename, Image img)
 }
 
 
-void image_free(Image img)
+void free_image(Image img)
 {
     stbi_image_free(img.arr);
 }
