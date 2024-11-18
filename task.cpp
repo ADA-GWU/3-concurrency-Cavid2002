@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     
     std::thread* th = new std::thread[core_count];
     
-    int sq_size = 10;
+    int sq_size = 50;
     
     std::cout << "LOADING IMAGE..." << std::endl;
     Image img = load_image("image.jpg");
