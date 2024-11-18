@@ -57,7 +57,7 @@ void apply_pixel(Image* img, Pixel p, int x1, int y1, int x2, int y2)
 }
 
 
-void proccess_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size)
+void process_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size)
 {
     Pixel mean;
     int increment = core_count * sq_size;
@@ -73,43 +73,57 @@ void proccess_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size
 } 
 
 
+
+void multithreaded_mode(Image* img, int sq_size)
+{
+    int core_count = std::thread::hardware_concurrency();
+    
+    std::cout << "Number of created threads: " << core_count << std::endl;
+    std::thread* th = new std::thread[core_count];
+    
+    for(int i = 0; i < core_count; i++)
+    {
+        th[i] = std::thread(process_img, img, i, core_count, sq_size);
+    }
+    
+    for(int i = 0; i < core_count; i++)
+    {
+        th[i].join();
+    }
+    
+    delete[] th;
+}
+
+
+
 int main(int argc, char** argv)
 {   
     
-    if(argc != 3)
+    if(argc != 4)
     {
         fatal_error("Usage: [filename] [square_size] [processing_mode]");
     }
 
+    Image img = load_image(argv[1]);
+    int sq_size = atoi(argv[2]);
 
-
-    int core_count = std::thread::hardware_concurrency();
-    
-    std::thread* th = new std::thread[core_count];
-    
-    int sq_size = 50;
-    
-    std::cout << "LOADING IMAGE..." << std::endl;
-    Image img = load_image("image.jpg");
-
-    std::cout << "THREAD COUNT: " << core_count << std::endl;
-    for(int i = 0; i < core_count; i++)
+    if(argv[3][0] != 'M')
     {
-        th[i] = std::thread(proccess_img, &img, i, core_count, sq_size);
+        std::cout << "Single threaded mode selected..." << std::endl;
+        process_img(&img, 0, 1, sq_size);
     }
-
-    
-    for(int i = 0; i < core_count; i++)
+    else
     {
-        std::cout << "JOIN THREADS " << i << std::endl;
-        th[i].join();
+        
+        multithreaded_mode(&img, sq_size);
+    
     }
     
-
-    std::cout << "WRITING RESULT..." << std::endl;
+  
+    std::cout << "Writing back result..." << std::endl;
     write_image("result.jpg", img);
     free_image(img);
 
-    delete[] th;
+    return 0;
     
 }
