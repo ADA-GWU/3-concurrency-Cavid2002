@@ -178,7 +178,7 @@ The images with the input parameters and results are provided below:
 ![img](./img/result1.jpg)
 
 ----
-- `Command-2:` `./task img/linus.jpg 100 S` or `./task img/linus.jpg 100 M`
+- `Command-2:` `./task img/coast.jpg 100 S` or `./task img/coast.jpg 100 M`
 
 
 - `Result-2:`
@@ -186,7 +186,7 @@ The images with the input parameters and results are provided below:
 ![img](./img/result2.jpg)
 
 ----
-- `Command-3:` `./task img/linus.jpg 200 S` or `./task img/linus.jpg 200 M`
+- `Command-3:` `./task img/coast.jpg 200 S` or `./task img/coast.jpg 200 M`
 
 
 - `Result-3:`
