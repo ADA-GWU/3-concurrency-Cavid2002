@@ -109,34 +109,36 @@ int main(int argc, char** argv)
     int sq_size = atoi(argv[2]);
 
     double result;
-    if(argv[3][0] != 'M')
+    if(argv[3][0] == 'S')
     {
         std::cout << "Single threaded mode selected..." << std::endl;
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::steady_clock::now();
         process_img(&img, 0, 1, sq_size);
-        auto finish = std::chrono::high_resolution_clock::now();
+        auto finish = std::chrono::steady_clock::now();
         
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
 
-        std::cout << duration.count() << std::endl;
+        std::cout << "Elapsed time in millsec: " << duration.count() << std::endl;
 
+    }
+    else if(argv[3][0] == 'M')
+    {
+
+        auto start = std::chrono::steady_clock::now();
+        multithreaded_mode(&img, sq_size);
+        auto finish = std::chrono::steady_clock::now();
+
+        
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
+
+        std::cout << "Elapsed time in millsec: " << duration.count() << std::endl;
     }
     else
     {
-
-        auto start = std::chrono::high_resolution_clock::now();
-        multithreaded_mode(&img, sq_size);
-        auto finish = std::chrono::high_resolution_clock::now();
-
-        
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
-
-        std::cout << duration.count() << std::endl;
-
+        fatal_error("Invalid processing mode! Choose from: [M] or [S]");
     }
     
     std::cout << "Writing back result..." << std::endl;
-    // std::cout << "Elapsed time: " << result << std::endl;
     write_image("result.jpg", img);
     free_image(img);
 
