@@ -121,6 +121,7 @@ int main(int argc, char** argv)
     else if(argv[3][0] == 'M')
     {  
         int thread_num = std::thread::hardware_concurrency();
+        std::cout << "Multi-threaded mode selected..." << std::endl;
         std::cout << "Number of threads: " << thread_num << std::endl;
 
         start = std::clock();
@@ -134,7 +135,7 @@ int main(int argc, char** argv)
     
     result = (double)(stop - start) / CLOCKS_PER_SEC;
 
-    std::cout << "Elapsed time: " << result << std::endl;
+    std::cout << "Elapsed time in milliseconds: " << result << std::endl;
 
     
     write_image("result.jpg", img);
