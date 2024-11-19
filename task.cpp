@@ -1,8 +1,10 @@
 #include <thread>
 #include <iostream>
-#include <chrono>
 #include <ctime>
-#include "Image.h"
+#include <cstring>
+
+#include "./include/Image.h"
+
 
 
 Pixel find_mean_pixel(Image* img, int x1, int y1, int x2, int y2)
@@ -59,10 +61,10 @@ void apply_pixel(Image* img, Pixel p, int x1, int y1, int x2, int y2)
 }
 
 
-void process_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size)
+void process_img(Image* img, uint32_t id, uint32_t thread_num, uint32_t sq_size)
 {
     Pixel mean;
-    int increment = core_count * sq_size;
+    int increment = thread_num * sq_size;
     for(int y = id * sq_size; y < img->height; y += increment)
     {
         for(int x = 0; x < img->width; x += sq_size)
@@ -76,19 +78,16 @@ void process_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size)
 
 
 
-void multithreaded_mode(Image* img, int sq_size)
+void multithreaded_mode(Image* img, int thread_num, int sq_size)
 {
-    int core_count = std::thread::hardware_concurrency();
+    std::thread* th = new std::thread[thread_num];
     
-    std::cout << "Number of created threads: " << core_count << std::endl;
-    std::thread* th = new std::thread[core_count];
-    
-    for(int i = 0; i < core_count; i++)
+    for(int i = 0; i < thread_num; i++)
     {
-        th[i] = std::thread(process_img, img, i, core_count, sq_size);
+        th[i] = std::thread(process_img, img, i, thread_num, sq_size);
     }
     
-    for(int i = 0; i < core_count; i++)
+    for(int i = 0; i < thread_num; i++)
     {
         th[i].join();
     }
@@ -100,7 +99,6 @@ void multithreaded_mode(Image* img, int sq_size)
 
 int main(int argc, char** argv)
 {   
-    
     if(argc != 4)
     {
         fatal_error("Usage: [filename] [square_size] [processing_mode]");
@@ -114,15 +112,19 @@ int main(int argc, char** argv)
     if(argv[3][0] == 'S')
     {
         std::cout << "Single threaded mode selected..." << std::endl;
+
         start = std::clock();
         process_img(&img, 0, 1, sq_size);
         stop = std::clock();
 
     }
     else if(argv[3][0] == 'M')
-    {
+    {  
+        int thread_num = std::thread::hardware_concurrency();
+        std::cout << "Number of threads: " << thread_num << std::endl;
+
         start = std::clock();
-        multithreaded_mode(&img, sq_size);
+        multithreaded_mode(&img, thread_num, sq_size);
         stop = std::clock();
     }
     else
@@ -134,8 +136,9 @@ int main(int argc, char** argv)
 
     std::cout << "Elapsed time: " << result << std::endl;
 
-    std::cout << "Writing back result..." << std::endl;
+    
     write_image("result.jpg", img);
+    
     free_image(img);
 
     return 0;
