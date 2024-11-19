@@ -102,7 +102,7 @@ for(int i = 0; i < core_count; i++)
 }
 ```
 
-The signature of function `process_img` looks like as follows:
+The function accepts image object, id of the thread executing function, thread count and box size. Thread count is used to calculate the increment along Y and thread id needed to define starting point for the loop. The structure of function `process_img` looks like as follows:
 
 ```C
 void process_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size)
@@ -119,7 +119,7 @@ void process_img(Image* img, uint32_t id, uint32_t core_count, uint32_t sq_size)
 }
 ```
 
-The function accepts image object, id of the thread executing function, thread count and box size. Thread count is used to calculate the increment along Y and thread id needed to define starting point for the loop. Reading the code carefully it is easy to come into conclusion that each thread will process separate row and apply pixel average. The diagram below demonstrates how it will work if the application runs on 4 core CPU. 
+Reading the code carefully it is easy to come into conclusion that each thread will process separate row and apply pixel average. The diagram below demonstrates how it will work if the application runs on 4 core CPU. 
 
 ```
             +---+---+---+---+---+---+---+---+
@@ -141,4 +141,25 @@ thread 3 -> |   |   |   |   |   |   |   |   |
             +---+---+---+---+---+---+---+---+
 
 ```
+
+Each thread will go along the row column by column and will find the mean pixel for each channel (R G B) and overwrite entire grid box pixels with values stored inside mean object. The algorithm for calculating and applying mean values to the grid element is quite straightforward so this part will be skipped and we will proceed with results.
+
+## Sharing Results: ##
+
+Before proceeding with results first the compilation process should be demonstrated:
+
+```Bash
+g++ task.cpp -o task -lm
+```
+
+Then the generated executable should provided the following parameters:
+
+```Bash
+./task [filename] [square_size] [processing_mode]
+```
+
+```Bash
+./task image.jpg 50 M
+```
+
 

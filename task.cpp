@@ -1,5 +1,6 @@
 #include <thread>
 #include <iostream>
+#include <chrono>
 #include "Image.h"
 
 
@@ -107,20 +108,35 @@ int main(int argc, char** argv)
     Image img = load_image(argv[1]);
     int sq_size = atoi(argv[2]);
 
+    double result;
     if(argv[3][0] != 'M')
     {
         std::cout << "Single threaded mode selected..." << std::endl;
+        auto start = std::chrono::high_resolution_clock::now();
         process_img(&img, 0, 1, sq_size);
+        auto finish = std::chrono::high_resolution_clock::now();
+        
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
+
+        std::cout << duration.count() << std::endl;
+
     }
     else
     {
-        
+
+        auto start = std::chrono::high_resolution_clock::now();
         multithreaded_mode(&img, sq_size);
-    
+        auto finish = std::chrono::high_resolution_clock::now();
+
+        
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
+
+        std::cout << duration.count() << std::endl;
+
     }
     
-  
     std::cout << "Writing back result..." << std::endl;
+    // std::cout << "Elapsed time: " << result << std::endl;
     write_image("result.jpg", img);
     free_image(img);
 
