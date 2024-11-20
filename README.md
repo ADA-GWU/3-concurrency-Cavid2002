@@ -216,9 +216,9 @@ Elapsed time in milliseconds: 0.018
 ----
 ### Command-3: ### 
 
-For Linux or Mac: `./task img/coast.jpg 100 S` or `./task img/coast.jpg 100 M`
+For Linux or Mac: `./task img/coast.jpg 200 S` or `./task img/coast.jpg 200 M`
 
-For Windows: ` .\task.exe .\img\coast.jpg 100 S` or ` .\task.exe .\img\coast.jpg 100 M`
+For Windows: ` .\task.exe .\img\coast.jpg 200 S` or ` .\task.exe .\img\coast.jpg 200 M`
 
 
 `Result-3:`
